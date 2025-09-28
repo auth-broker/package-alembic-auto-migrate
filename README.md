@@ -1,6 +1,6 @@
 <div align="center">
 
-# Python Package Template
+# Alembic Auto Migrate
 
 The template repository for creating python packages, shared across auth-broker.
 
@@ -20,23 +20,6 @@ The template repository for creating python packages, shared across auth-broker.
 [![CI](https://github.com/auth-broker/package-template/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/auth-broker/package-template/actions/workflows/ci.yaml)
 
 </div>
-
-______________________________________________________________________
-
-## Template Checklist
-
-- \[ \] Rename module `src/ab_core/template` ->
-  `src/ab_core/your_package_name`
-- \[ \] Rename tests module `src/ab_core/template` ->
-  `src/ab_core/your_package_name`
-- \[ \] Update `pyproject.toml`: `[project]` section based on your package name
-  / versioning etc.
-- \[ \] Update `README.md` references of `python-package-template` ->
-  `your-package-name`
-- \[ \] Add your pypi credentials as `HTTP_BASIC_PYPI_USERNAME` &
-  `HTTP_BASIC_PYPI_PASSWORD` repository variables / secrets respectively. These
-  will be need for the pypi publish cd workflow to succeed.
-- \[ \] Remove this section
 
 ______________________________________________________________________
 

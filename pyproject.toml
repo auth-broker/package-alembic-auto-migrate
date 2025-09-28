@@ -6,7 +6,7 @@ requires = ["hatchling"]
 dev = [
   "debugpy>=1.8.14,<2",
   "isort>=6.0.1,<7",
-  "ab-test-fixtures>=0.1.3,<1",
+  "ab-test-fixtures>=0.1.5,<1",
   "pre-commit>=4.2.0,<5",
   "pytest-asyncio>=1.0.0,<2",
   "pytest-cov>=6.2.1,<7",
@@ -17,9 +17,14 @@ dev = [
 
 [project]
 authors = [{email = "mattcoul7@gmail.com", name = "Matt Coulter"}]
-dependencies = []
-description = "A template package template."
-name = "ab-template-package"
+dependencies = [
+  "ab-database>=0.2.1,<1",
+  "alembic>=1.16.5",
+  "pydantic>=2.11.7,<3",
+  "sqlmodel>=0.0.24,<0.0.25",
+]
+description = "Auto migration using alembic."
+name = "ab-alembic-auto-migrate"
 readme = "README.md"
 requires-python = ">=3.12,<4.0"
 version = "0.1.0"
