@@ -6,7 +6,6 @@ import time
 from alembic import command as alembic_command
 from alembic.autogenerate import api as ag_api
 from alembic.config import Config
-from alembic.script import Script
 from alembic.runtime.migration import MigrationContext
 from pydantic import BaseModel, DirectoryPath, Field, FilePath
 from sqlalchemy.engine import make_url
@@ -129,6 +128,6 @@ class AlembicAutoMigrate(BaseModel):
 
             return await aconn.run_sync(_compare)
 
-    def _create_revision(self, cfg: Config) :
+    def _create_revision(self, cfg: Config):
         """Create a new revision, returning its ID or None."""
-        return 
+        return

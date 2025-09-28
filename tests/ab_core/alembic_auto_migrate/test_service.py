@@ -1,10 +1,6 @@
-from __future__ import annotations
-
-import os
-from unittest.mock import patch
+"""Tests for AlembicAutoMigrate service."""
 
 import pytest
-from sqlalchemy import inspect
 
 from ab_core.alembic_auto_migrate.service import AlembicAutoMigrate
 from ab_core.database.databases import Database
@@ -37,8 +33,10 @@ async def test_run_with_models_import_creates_revision_and_table(
 
     # Verify the table exists
     async with tmp_database_async.async_engine.begin() as aconn:
+
         def _check(sync_conn):
             from sqlalchemy import inspect as _inspect
+
             insp = _inspect(sync_conn)
             return "gadgets" in insp.get_table_names()
 

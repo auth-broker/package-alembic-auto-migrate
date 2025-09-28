@@ -1,12 +1,10 @@
 """Test fixtures."""
 
 import os
+import shutil
 from pathlib import Path
 from unittest.mock import patch
 
-import shutil
-from pathlib import Path
-import pytest
 import pytest
 from ab_test.fixtures.database.conftest import (
     tmp_database_async,
@@ -82,6 +80,7 @@ def clear_alembic_versions_teardown():
 
     # Always clear after each test
     _clear_versions_dir(versions_dir)
+
 
 __all__ = [
     tmp_database_async,

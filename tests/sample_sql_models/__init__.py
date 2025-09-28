@@ -1,6 +1,3 @@
 from .gadget import Gadget
 
-
-__all__ = [
-    "Gadget"
-]
+__all__ = ["Gadget"]
