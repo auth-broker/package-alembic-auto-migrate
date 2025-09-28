@@ -2,7 +2,6 @@
 
 import sys
 
-import pytest
 from sqlalchemy import inspect
 from sqlmodel import SQLModel
 
@@ -10,37 +9,31 @@ from ab_core.alembic_auto_migrate.service import AlembicAutoMigrate
 from ab_core.database.databases import Database
 
 
-@pytest.mark.asyncio
-async def test_run_no_models(
-    tmp_database_async: Database,
-    alembic_auto_migrate_service: AlembicAutoMigrate,
+def test_run_no_models(
+    alembic_service_and_db: tuple[AlembicAutoMigrate, Database],
 ):
     """No models imported => no diffs => no revision."""
-    created = await alembic_auto_migrate_service.run(tmp_database_async.async_engine)
+    alembic_service, _ = alembic_service_and_db
+    created = alembic_service.run()
     assert created is None
 
 
-@pytest.mark.asyncio
-async def test_run_with_models_import_creates_revision_and_table(
-    tmp_database_async: Database,
-    alembic_auto_migrate_service: AlembicAutoMigrate,
+def test_run_with_models(
+    alembic_service_and_db: tuple[AlembicAutoMigrate, Database],
 ):
     """Import static models via ALEMBIC_MODELS_IMPORT so autogenerate sees diffs."""
+    alembic_service, db = alembic_service_and_db
+
     # --- 1) Import v1 models (id, name), migrate ---
     import tests.sample_sql_models.v1  # noqa registers tables in SQLModel.metadata
 
-    created_v1 = await alembic_auto_migrate_service.run(tmp_database_async.async_engine)
+    created_v1 = alembic_service.run()
     assert created_v1 is not None  # first revision created
 
     # Verify table exists and only has id, name
-    async with tmp_database_async.async_engine.begin() as aconn:
-
-        def _cols(sync_conn):
-            insp = inspect(sync_conn)
-            cols = [c["name"] for c in insp.get_columns("gadgets")]
-            return cols
-
-        cols_v1 = await aconn.run_sync(_cols)
+    with db.sync_engine.begin() as conn:
+        insp = inspect(conn)
+        cols_v1 = [c["name"] for c in insp.get_columns("gadgets")]
 
     assert "gadgets" in {"gadgets"}  # sanity
     assert set(cols_v1) == {"id", "name"}
@@ -53,21 +46,16 @@ async def test_run_with_models_import_creates_revision_and_table(
     # Import v2 (id, name, description)
     import tests.sample_sql_models.v2  # noqa registers tables in SQLModel.metadata
 
-    created_v2 = await alembic_auto_migrate_service.run(tmp_database_async.async_engine)
+    created_v2 = alembic_service.run()
     assert created_v2 is not None  # a new revision for the new column
 
     # Verify new column exists
-    async with tmp_database_async.async_engine.begin() as aconn:
-
-        def _cols(sync_conn):
-            insp = inspect(sync_conn)
-            cols = [c["name"] for c in insp.get_columns("gadgets")]
-            return cols
-
-        cols_v2 = await aconn.run_sync(_cols)
+    with db.sync_engine.begin() as conn:
+        insp = inspect(conn)
+        cols_v2 = [c["name"] for c in insp.get_columns("gadgets")]
 
     assert set(cols_v2) == {"id", "name", "description"}
 
     # --- 3) Idempotency: running again with v2 should create no new revision ---
-    created_again = await alembic_auto_migrate_service.run(tmp_database_async.async_engine)
+    created_again = alembic_service.run()
     assert created_again is None
